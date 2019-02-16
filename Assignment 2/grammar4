@@ -1,0 +1,264 @@
+# Symbols in the grammar are case-sensitive.
+#
+# This grammar uses a convention that
+#    - terminals are lowercase          (president)
+#    - preterminals are capitalized     (Noun_singular)
+#    - other nonterminals are all-caps  (NP)
+#
+# This convention just makes grammars more readable to humans.  Thus:
+#
+#    - When *you* are writing grammars, you should
+#      follow this convention unless you have a good reason not to.
+#
+#    - But the  *program* should still work with grammars that don't
+#      follow this convention.  So how can the program reliably tell
+#      the difference Be_singulartween terminal and nonterminal symbols?  If
+#      there is at least one rule for rewriting a symbol, then that
+#      symbol is a nonterminal and should Be_singular rewritten.
+#######################
+
+# Rules for creating full sentences.
+
+1	ROOT	S .
+1	ROOT	S !
+1	ROOT	is it true that S ?     # mixing terminals and nonterminals is ok.
+1   ROOT    Q_S ?
+
+# The basic grammar rules.  Here's what the abbreviations stand for:
+#    S  = sentence
+#    NP = noun phrase
+#    NP_SINGULAR = singular noun phrase
+#    NP_PLURAL = plural noun phrase
+#    VP = verb phrase
+#    VP_SINGULAR = singular verb phrase
+#    VP_PLURAL = plural verb phrase
+#    PP = prepositional phrase
+#    Det = determiner (sometimes called "article")
+#    Prep = preposition
+#    Adj = adjective
+#    Comp = complementizer
+#    Coord = coordinator (e.g end,or)
+#    Vi   = intransitive verb
+#    Vi_singular = singular intransitive verb
+#    Vi_plural = plural intransitive verb
+#    V5   = verbs before complementizer
+#    V6 = verbs before NP and complementizer
+#    Ving = verbs that ends with ing
+#    VP_SINGULAR_ING = singular verbs that ends with ing
+#    VP_PLURAL_ING = plural verbs that ends with ing
+#    Nnp = Proper noun
+#    Be_singular = the verb 'be' in singular form
+#    Be_plural = the verb 'be' in plural form
+#    Adv = adverb
+#    VP_COMP = verb phrase with complementizer
+#    VP_COMP_SINGULAR = singular verb phrase with complementizer
+#    VP_COMP_PLURAL = plural verb phrase with complementizer
+#    Pronoun = Pronoun
+#    ProNoun_singular = singular pronoun
+#    ProNoun_plural = plural pronoun
+#    SBAR = phrase/sentence that starts with complementizer
+#    Obj = it as a Noun
+#    VerbPP = verb with prepositional after it
+#    Verb = verb
+#    V_singular = verb in singular form
+#    V_plural = verb in plural form
+#    Noun_singular = Noun in singular form
+#    Noun_plural = Noun in plural form
+#    Q_S = yes/no questions
+#    Q_word = kinds of yes/no questions
+#    Q_pres_singular = present simple singular questions
+#    Q_pres_plural = present simple plural questions
+#    Q_pres_prog_singular = present progressive singular questions
+#    Q_pres_prog_plural = present progressive plural questions
+
+
+4	S	NP VP
+1	S	NP Vi
+1   S   NP_SINGULAR Vi_singular
+1   S   NP_PLURAL   Vi_plural
+4   S   NP_SINGULAR VP_SINGULAR
+4   S   NP_PLURAL   VP_PLURAL
+4   S   NP_SINGULAR VP_SINGULAR_ING
+4   S   NP_PLURAL   VP_PLURAL_ING
+1   S   ProNoun_singular VP_COMP
+1   S   ProNoun_plural   VP_COMP
+1   S   ProNoun_singular VP_COMP_SINGULAR
+1   S   ProNoun_plural   VP_COMP_PLURAL
+1   S   NP VP_COMP
+1   S   NP_SINGULAR VP_COMP_SINGULAR
+1   S   NP_PLURAL   VP_COMP_PLURAL
+1   S   Obj VP_RES SBAR
+
+1   VP_RES  V7  NP
+1   VP_RES  V7_singular NP
+
+1   SBAR  Comp S
+1	VP	Verb NP
+
+1   VP_COMP  V5 SBAR
+1   VP_COMP  V6 NP SBAR
+1   VP_COMP_SINGULAR  V5_singular SBAR
+1   VP_COMP_PLURAL    V5_plural SBAR
+1   VP_COMP_SINGULAR  V6_singular NP SBAR
+1   VP_COMP_PLURAL    V6_plural NP SBAR
+
+3   VP_SINGULAR_ING  Be_singular Ving NP
+1   VP_SINGULAR  Be_singular NP_SINGULAR
+1   VP_SINGULAR  Be_singular Adj
+1   VP_SINGULAR  V_singular NP
+
+1   VP_PLURAL_ING    Be_plural Ving NP
+1   VP_PLURAL    Be_plural NP_PLURAL
+1   VP_PLURAL    Be_plural Adj
+1   VP_PLURAL    V_plural NP
+
+0.5   VP  Verb Coord VP #get small weight because we want to avoid "eat and sleep and kiss and ..."
+4   VP  VerbPP PP
+
+1   NP      NP_SINGULAR
+1   NP      NP_PLURAL
+
+1	NP_SINGULAR     Det_singular Noun_singular
+1	NP_SINGULAR     NP_SINGULAR PP
+1   NP_SINGULAR     Nnp
+1   NP_PLURAL       NP_PLURAL PP
+5	NP_PLURAL   	Det_plural   Noun_plural
+0.5	NP_PLURAL   	NP_PLURAL Coord NP_SINGULAR
+0.5	NP_PLURAL   	NP_SINGULAR Coord NP_SINGULAR
+0.5	NP_PLURAL   	NP_PLURAL Coord NP_PLURAL
+0.5	NP_PLURAL   	NP_SINGULAR Coord NP_PLURAL
+
+1	PP	            Prep NP_SINGULAR
+1	PP	            Prep NP_PLURAL
+1	Noun_singular	Adj Noun_singular
+1	Noun_plural 	Adj Noun_plural
+
+#yes-no questions phrases
+1   Q_S Q_word NP V_plural NP
+1   Q_S Q_word ProNoun_singular VP_COMP_PLURAL
+1   Q_S Q_word ProNoun_plural   VP_COMP_PLURAL
+1   Q_S Q_word NP VP_COMP_PLURAL
+1   Q_S Q_word Obj V7_plural NP SBAR
+
+1   Q_S Q_pres_singular NP_SINGULAR V_plural NP
+1   Q_S Q_pres_singular ProNoun_singular VP_COMP_PLURAL
+1   Q_S Q_pres_singular NP_SINGULAR VP_COMP_PLURAL
+1   Q_S Q_pres_singular Obj V7_plural NP SBAR
+
+1   Q_S Q_pres_plural NP_PLURAL V_plural NP
+1   Q_S Q_pres_plural ProNoun_plural   VP_COMP_PLURAL
+1   Q_S Q_pres_plural NP_PLURAL VP_COMP_PLURAL
+
+1   Q_S Q_pres_prog_singular NP_SINGULAR Ving NP
+1   Q_S Q_pres_prog_plural NP_PLURAL Ving NP
+# Vocabulary.  Your program can see that "ate" is a terminal
+# symbol Be_singularcause there exists no rule for rewriting it.
+# Any symbol that can rewrite as a terminal (or a string of
+# terminals, like "chief of staff") is called a "preterminal."  Notice
+# that a preterminal is a special kind of nonterminal.
+
+1	Verb	ate
+1	Verb	wanted
+1	Verb	kissed
+1	Verb	understood
+1	Verb	pickled
+
+1   VerbPP  worked
+
+2   Vi    sighed
+
+2   Ving  eating
+
+2   V5    thought
+2   V5    said
+1   V6    told
+1   V7    perplexed
+
+#yes-no questions words
+1   Q_word  did
+1   Q_word  would
+1   Q_word  will
+1   Q_word  can
+1   Q_word  could
+1   Q_pres_singular does
+1   Q_pres_plural   do
+1   Q_pres_prog_singular is
+1   Q_pres_prog_plural  are
+1   Q_past_prog_singular was
+1   Q_past_prog_plural  were
+
+# singular/plural words
+1   V_singular     eats
+1   V_singular     wants
+1   V_singular     kisses
+1   V_singular     understands
+1   V_singular     pickles
+1   V_singular     chooses
+
+1   V_plural     eat
+1   V_plural     want
+1   V_plural     kiss
+1   V_plural     understand
+1   V_plural     pickle
+1   V_plural     choose
+
+1   Vi_singular     sighs
+1   Vi_plural       sigh
+
+1   V5_singular     thinks
+1   V5_singular     says
+1   V5_plural       think
+1   V5_plural       say
+
+1   V6_singular     tells
+1   V6_plural       tell
+
+1   V7_singular     perplexes
+1   V7_plural       perplex
+
+1	Det_plural  	the
+1	Det_singular	the
+1	Det_singular	a
+1	Det_singular	every
+
+1	Noun_singular	president
+1	Noun_singular	sandwich
+1	Noun_singular	pickle
+1	Noun_singular	chief of staff
+1	Noun_singular	floor
+1   Noun_singular    desk
+1   Noun_singular    proposal
+1   Noun_singular    rainbow
+1   Noun_singular    citizen
+
+1	Noun_plural     presidents
+1	Noun_plural	    sandwiches
+1	Noun_plural	    pickles
+1	Noun_plural	    citizens
+
+1   Nnp    Sally    #Sally = Proper Noun_singular
+
+1	Adj	fine
+1	Adj	delicious
+1	Adj	perplexed
+1	Adj	pickled
+2   Adj Adv Adj
+1   Adv very
+
+1	Prep	with
+3	Prep	on
+1	Prep	under
+1	Prep	in
+1   Prep    over
+
+1   Coord   and
+
+1   Comp    that
+
+1   Obj  it
+1   ProNoun_singular      he     # he, she = ProNoun_singulars
+1   ProNoun_singular      she
+1   ProNoun_plural        they
+
+1   Be_singular      is
+1   Be_plural        are
